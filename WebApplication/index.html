@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Intra Life</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row text-center login-page">
+            <div class="col-md-12 login-form">
+                <form method="post">
+                    <div class="row">
+                        <div class="col-md-12 login-form-header">
+                            <p class="login-form-font-header">Prueba <span>Acceso</span><p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 login-from-row">
+                            <input id="usuario" name="usuario" type="text" placeholder="Usuario" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 login-from-row">
+                            <input id="password" name="password" type="password" placeholder="Contraseña" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 login-from-row">
+                            <button class="btn btn-info" id="idValidar">Entrar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const Url = "http://localhost:40242/api/login/authenticate";
+
+        document.getElementById("idValidar").addEventListener("click", function (event)
+        {
+            const usuario = document.getElementById("usuario");
+            const password = document.getElementById("password");
+            const Data = {
+                Username: usuario.value,
+                Password: password.value
+            };
+            const Param = {
+                body: JSON.stringify(Data),
+                method: "POST",
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            };          
+            
+
+            if (usuario.validity.valueMissing) {
+                usuario.setCustomValidity("¡Se esperaba un USUARIO!");
+            } else {
+                usuario.setCustomValidity("");
+            }
+
+            if (password.validity.valueMissing) {
+                password.setCustomValidity("¡Se esperaba un PASSWORD!");
+            } else {
+                password.setCustomValidity("");
+            }
+
+            if (!password.validity.valueMissing && !usuario.validity.valueMissing) {
+                event.preventDefault();
+
+                fetch(Url,
+                    Param)
+                    .then(function (res) { return res.text(); })
+                    .then(function (data) {
+                        //Se almacena en localstorage
+                        localStorage.setItem('tokenacceso', data.replace(/"/gi,''));
+                    })
+                    .catch(function (e) { alert("No se puede validar: "+e)})
+            }
+
+        });
+    </script>
+</body>
+
+</html>
